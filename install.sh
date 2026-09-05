@@ -70,6 +70,14 @@ chmod +x "$LAUNCHER"
 
 say "Selesai! Jalankan dengan: zagent"
 if ! echo "$PATH" | tr ':' '\n' | grep -qx "$BIN_DIR"; then
-  say "Tambahkan $BIN_DIR ke PATH dulu:"
-  printf '  echo '"'"'export PATH="%s:$PATH"'"'"' >> ~/.bashrc && source ~/.bashrc\n' "$BIN_DIR"
+  say "$BIN_DIR belum ada di PATH, menambahkan otomatis ke shell rc ..."
+  for RC in "$HOME/.bashrc" "$HOME/.zshrc" "$HOME/.profile"; do
+    if [ -f "$RC" ] && ! grep -qF "$BIN_DIR" "$RC" 2>/dev/null; then
+      echo "export PATH=\"$BIN_DIR:\$PATH\"" >> "$RC"
+      say "  ditambahkan ke $RC"
+    fi
+  done
+  say "Selesai. Muat ulang shell atau jalanin: source ~/.bashrc"
+else
+  say "Siap dipakai! Jalankan: zagent"
 fi

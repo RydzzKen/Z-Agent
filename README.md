@@ -54,6 +54,26 @@ yt-dlp        # untuk download video medsos
 
 ## Instalasi & Menjalankan
 
+### One-liner (curl)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/RydzzKen/Z-Agent/main/install.sh | bash
+```
+
+Script akan clone repo ke `~/.zagent`, bikin venv, install dependency, dan
+pasang launcher `zagent` ke `~/.local/bin` (tambahkan folder itu ke `PATH`
+bila belum). Setelah selesai, jalankan:
+
+```bash
+zagent
+```
+
+Update ke versi terbaru:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/RydzzKen/Z-Agent/main/install.sh | bash
+```
+
 ### Cara cepat (Termux / Linux)
 
 ```bash

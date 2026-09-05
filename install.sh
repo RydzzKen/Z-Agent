@@ -36,20 +36,35 @@ fi
 cd "$INSTALL_DIR"
 
 # --- 3. venv & dependency ---
-say "Menyiapkan Python venv ..."
-[ -d .venv ] || python3 -m venv .venv
-. .venv/bin/activate
+say "Menyiapkan environment Python ..."
+LAUNCH_PY=""
 
-say "Menginstall dependencies ..."
-python -m pip install --quiet --upgrade pip
-python -m pip install --quiet -r requirements.txt
+if command -v uv >/dev/null 2>&1; then
+  [ -d .venv ] || uv venv
+  uv pip install -r requirements.txt
+  LAUNCH_PY="$INSTALL_DIR/.venv/bin/python"
+elif [ ! -d .venv ] && python3 -m venv .venv >/dev/null 2>&1; then
+  :
+fi
+
+if [ -x .venv/bin/python ]; then
+  . .venv/bin/activate
+  python -m pip install --quiet -r requirements.txt
+  LAUNCH_PY="$INSTALL_DIR/.venv/bin/python"
+elif [ -z "$LAUNCH_PY" ]; then
+  say "python3-venv tidak tersedia, pakai pip system (--user)."
+  python3 -m pip install --user -r requirements.txt
+  LAUNCH_PY="$(command -v python3)"
+fi
+
+[ -n "$LAUNCH_PY" ] || die "Gagal menyiapkan Python di instalasi ini."
 
 # --- 4. Launcher ---
 mkdir -p "$BIN_DIR"
 LAUNCHER="$BIN_DIR/zagent"
 {
   printf '#!/bin/sh\n'
-  printf 'exec "%s/.venv/bin/python" -m zagent "$@"\n' "$INSTALL_DIR"
+  printf 'exec "%s" -m zagent "$@"\n' "$LAUNCH_PY"
 } > "$LAUNCHER"
 chmod +x "$LAUNCHER"
 

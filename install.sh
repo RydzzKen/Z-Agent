@@ -64,7 +64,7 @@ mkdir -p "$BIN_DIR"
 LAUNCHER="$BIN_DIR/zagent"
 {
   printf '#!/bin/sh\n'
-  printf 'exec "%s" -m zagent "$@"\n' "$LAUNCH_PY"
+  printf 'cd "%s" && exec "%s" -m zagent "$@"\n' "$INSTALL_DIR" "$LAUNCH_PY"
 } > "$LAUNCHER"
 chmod +x "$LAUNCHER"
 

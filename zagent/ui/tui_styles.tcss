@@ -62,6 +62,26 @@ Screen {
     border-top: solid #3c3838;
 }
 
+/* Compact token bar — hanya muncul di layar sempit (mobile/Termux),
+   menggantikan sidebar yang disembunyikan. */
+#token-bar {
+    display: none;
+}
+
+/* Layar sempit (<62 kolom, mis. Termux/Android): sidebar disembunyikan
+   biar chat full-width, digantikan bar status ringkas di bawah input. */
+.width-narrow #sidebar {
+    display: none;
+}
+
+.width-narrow #token-bar {
+    display: block;
+}
+
+.width-narrow #input-container {
+    padding: 1 1;
+}
+
 #input-container {
     height: 6;
     padding: 1 3;

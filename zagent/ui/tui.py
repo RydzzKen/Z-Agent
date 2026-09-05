@@ -51,6 +51,11 @@ class ZAgentTUI(App):
 
     CSS_PATH = "tui_styles.tcss"
 
+    # Layout breakpoints: layar sempit (<62 kolom, mis. Termux/Android)
+    # mendapat class "width-narrow" sehingga sidebar disembunyikan dan
+    # digantikan TokenBar ringkas di bawah input.
+    HORIZONTAL_BREAKPOINTS = [(0, "width-narrow"), (62, "width-wide")]
+
     BINDINGS = [
         Binding("ctrl+q", "quit", "Quit"),
         Binding("ctrl+n", "new_session", "New Session"),
@@ -95,6 +100,15 @@ class ZAgentTUI(App):
             yield w.CommandPopup(id="cmd-popup")
             with Horizontal(id="input-container"):
                 yield Input(placeholder="Ketik pesan atau /command...", id="user-input")
+            yield w.TokenBar(
+                requests=usage.USAGE_STATS["requests"],
+                prompt_tokens=usage.USAGE_STATS["prompt_tokens"],
+                output_tokens=usage.USAGE_STATS["candidates_tokens"],
+                total_tokens=usage.USAGE_STATS["total_tokens"],
+                model=state.MODEL_NAME,
+                thinking=state.THINK_ENABLED,
+                id="token-bar",
+            )
 
         yield Footer()
 
@@ -179,12 +193,22 @@ class ZAgentTUI(App):
             sb.model = state.MODEL_NAME
         except Exception:
             pass
+        try:
+            tb = self.query_one(w.TokenBar)
+            tb.model = state.MODEL_NAME
+        except Exception:
+            pass
 
     def _update_think(self):
         """Refresh think indicator."""
         try:
             ti = self.query_one(w.ThinkIndicator)
             ti.enabled = state.THINK_ENABLED
+        except Exception:
+            pass
+        try:
+            tb = self.query_one(w.TokenBar)
+            tb.thinking = state.THINK_ENABLED
         except Exception:
             pass
 
@@ -196,6 +220,14 @@ class ZAgentTUI(App):
             uw.prompt_tokens = usage.USAGE_STATS["prompt_tokens"]
             uw.output_tokens = usage.USAGE_STATS["candidates_tokens"]
             uw.total_tokens = usage.USAGE_STATS["total_tokens"]
+        except Exception:
+            pass
+        try:
+            tb = self.query_one(w.TokenBar)
+            tb.requests = usage.USAGE_STATS["requests"]
+            tb.prompt_tokens = usage.USAGE_STATS["prompt_tokens"]
+            tb.output_tokens = usage.USAGE_STATS["candidates_tokens"]
+            tb.total_tokens = usage.USAGE_STATS["total_tokens"]
         except Exception:
             pass
 

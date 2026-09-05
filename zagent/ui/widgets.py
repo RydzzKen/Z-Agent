@@ -164,7 +164,7 @@ class ToolCallMessage(Widget):
 
 
 class SeparatorLine(Widget):
-    """A horizontal separator line."""
+    """A horizontal separator line — sized to the available width."""
 
     DEFAULT_CSS = """
     SeparatorLine {
@@ -172,22 +172,18 @@ class SeparatorLine(Widget):
         padding: 0;
         margin: 0;
     }
-    SeparatorLine Label {
-        width: 100%;
-        color: #3c3838;
-    }
     """
 
     def __init__(self, label: str = "", **kwargs):
         super().__init__(**kwargs)
         self._label = label
 
-    def compose(self) -> ComposeResult:
+    def render(self) -> Text:
+        width = max(10, self.size.width)
         if self._label:
-            text = f"─── {self._label} ───"
-        else:
-            text = "─" * 80
-        yield Label(text)
+            prefix = f"─── {self._label} "
+            return Text(prefix + "─" * max(0, width - len(prefix)), style="#3c3838")
+        return Text("─" * width, style="#3c3838")
 
 
 # ── Status sidebar widgets ────────────────────────────────────────────
@@ -349,6 +345,54 @@ class UsageWidget(Widget):
         text.append("\n")
         text.append(f" Total:   {self.total_tokens}")
         return text
+
+
+class TokenBar(Widget):
+    """One-line compact status bar shown under the input on narrow screens.
+
+    Visible only when the terminal is too small for the sidebar (e.g. mobile /
+    Termux). Shows a quick glance at token usage, model, and thinking mode.
+    """
+
+    DEFAULT_CSS = """
+    TokenBar {
+        height: 1;
+        padding: 0 3;
+        color: #9a9898;
+        text-style: dim;
+    }
+    """
+
+    requests = reactive(0)
+    prompt_tokens = reactive(0)
+    output_tokens = reactive(0)
+    total_tokens = reactive(0)
+    model = reactive("")
+    thinking = reactive(False)
+
+    def __init__(self, requests: int = 0, prompt_tokens: int = 0, output_tokens: int = 0, total_tokens: int = 0, model: str = "", thinking: bool = False, **kwargs):
+        super().__init__(**kwargs)
+        self.requests = requests
+        self.prompt_tokens = prompt_tokens
+        self.output_tokens = output_tokens
+        self.total_tokens = total_tokens
+        self.model = model
+        self.thinking = thinking
+
+    def _short_total(self) -> str:
+        n = self.total_tokens
+        if n >= 1_000_000:
+            return f"{n / 1_000_000:.1f}M"
+        if n >= 1_000:
+            return f"{n / 1_000:.1f}K"
+        return str(n)
+
+    def render(self) -> Text:
+        parts = [f"⚡ {self.requests} req", f"{self._short_total()} tok"]
+        if self.model:
+            parts.append(self.model.split("/")[-1])
+        parts.append("🧠 ON" if self.thinking else "🧠 OFF")
+        return Text("  ·  ".join(parts), style="#9a9898")
 
 
 # ── Autocomplete popup ──────────────────────────────────────────────

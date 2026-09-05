@@ -68,8 +68,8 @@ Screen {
     display: none;
 }
 
-/* Layar sempit (<62 kolom, mis. Termux/Android): sidebar disembunyikan
-   biar chat full-width, digantikan bar status ringkas di bawah input. */
+/* Layar sempit (<90 kolom, mis. Termux): sidebar disembunyikan biar chat
+   full-width, digantikan bar status ringkas (token) di bawah input. */
 .width-narrow #sidebar {
     display: none;
 }
@@ -79,6 +79,19 @@ Screen {
 }
 
 .width-narrow #input-container {
+    padding: 1 1;
+}
+
+/* Toggle manual Ctrl+B — diprioritaskan di atas rule lebar layar. */
+.manual-mobile #sidebar {
+    display: none;
+}
+
+.manual-mobile #token-bar {
+    display: block;
+}
+
+.manual-mobile #input-container {
     padding: 1 1;
 }
 

@@ -51,10 +51,10 @@ class ZAgentTUI(App):
 
     CSS_PATH = "tui_styles.tcss"
 
-    # Layout breakpoints: layar sempit (<62 kolom, mis. Termux/Android)
-    # mendapat class "width-narrow" sehingga sidebar disembunyikan dan
-    # digantikan TokenBar ringkas di bawah input.
-    HORIZONTAL_BREAKPOINTS = [(0, "width-narrow"), (62, "width-wide")]
+    # Layout breakpoints: layar sempit (<90 kolom, mis. Termux portrait &
+    # landscape) dapat class "width-narrow", sidebar disembunyikan & diganti
+    # TokenBar di bawah input. Bisa di-toggle manual kapan saja (Ctrl+B).
+    HORIZONTAL_BREAKPOINTS = [(0, "width-narrow"), (90, "width-wide")]
 
     BINDINGS = [
         Binding("ctrl+q", "quit", "Quit"),
@@ -62,6 +62,7 @@ class ZAgentTUI(App):
         Binding("ctrl+r", "reset_chat", "Reset"),
         Binding("ctrl+s", "show_status", "Status"),
         Binding("ctrl+t", "toggle_think", "Toggle Think"),
+        Binding("ctrl+b", "toggle_compact", "Mobile layout"),
         Binding("ctrl+y", "copy_last", "Copy last message", show=False),
         Binding("slash", "focus_input", "Command", show=False),
     ]
@@ -70,6 +71,7 @@ class ZAgentTUI(App):
         super().__init__(**kwargs)
         self.contents = []
         self.is_processing = False
+        self._compact_override = False
 
     def compose(self) -> ComposeResult:
         yield Header(show_clock=True)
@@ -144,6 +146,18 @@ class ZAgentTUI(App):
         self.contents = []
         sessions.begin_new_session()
         self._update_session_info()
+
+    def action_toggle_compact(self):
+        """Toggle manual layout mobile (full chat, tanpa sidebar)."""
+        self._compact_override = not self._compact_override
+        try:
+            self.screen.set_class(self._compact_override, "manual-mobile")
+        except Exception:
+            pass
+        self.notify(
+            "Layout mobile: ON" if self._compact_override else "Layout mobile: AUTO",
+            timeout=2,
+        )
 
     def _load_session_messages(self, contents):
         """Load session contents into the chat area."""

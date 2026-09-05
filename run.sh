@@ -8,9 +8,9 @@
 #   (popup autocomplete "/" saat mengetik).
 #
 # Usage:
-#   ./run.sh          → CLI mode (default)
-#   ./run.sh --tui    → TUI mode (Textual-based)
-#   ZAGENT_TUI=1 ./run.sh  → TUI mode via env var
+#   ./run.sh          → TUI mode (default)
+#   ./run.sh --cli    → CLI mode (text-based)
+#   ZAGENT_CLI=1 ./run.sh  → CLI mode via env var
 set -e
 
 cd "$(dirname "$0")" || exit 1

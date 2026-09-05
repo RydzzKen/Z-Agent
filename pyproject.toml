@@ -1,0 +1,15 @@
+[project]
+name = "zagent"
+version = "0.1.0"
+description = "Z-Agent AI coding agent CLI"
+requires-python = ">=3.11"
+dependencies = [
+    "requests",
+    "beautifulsoup4",
+    "prompt_toolkit",
+    "yt-dlp",
+    "textual>=1.0",
+]
+
+[tool.uv]
+package = false

@@ -1,0 +1,31 @@
+================================================================
+FIX: Ganti mirror Ubuntu + install xclip (copy-paste Z-Agent)
+================================================================
+
+Langkah 1 — STOP apt yang stuck (Ctrl+C di sesi yang jalan):
+  Tekan:  Ctrl + C
+
+Langkah 2 — Ganti mirror id.archive.ubuntu.com ke archive.ubuntu.com:
+----------------------------------------------------------------
+sudo sed -i 's|id\.archive\.ubuntu\.com|archive.ubuntu.com|g' /etc/apt/sources.list /etc/apt/sources.list.d/*.list
+
+Langkah 3 — Update & install xclip:
+----------------------------------------------------------------
+sudo apt update
+
+sudo apt install -y xclip
+
+Langkah 4 — Cek berhasil (harus ada "FOUND: xclip"):
+----------------------------------------------------------------
+command -v xclip && echo "FOUND: xclip"
+
+================================================================
+Selesai. Restart Z-Agent:
+  1. Tutup Z-Agent  ->  Ctrl+Q (atau ketik /quit)
+  2. Jalankan lagi  ->  python -m zagent.main
+
+Cara pakai:
+  - Ctrl+Y  ->  copy pesan terakhir ke clipboard sistem
+  - Ctrl+V  ->  paste di input Z-Agent
+  - Ctrl+Shift+V  ->  paste di terminal lain
+================================================================

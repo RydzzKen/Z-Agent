@@ -1,0 +1,5 @@
+requests
+beautifulsoup4
+prompt_toolkit
+yt-dlp
+textual>=1.0

@@ -43,18 +43,18 @@ if command -v uv >/dev/null 2>&1; then
   [ -d .venv ] || uv venv
   uv pip install -r requirements.txt
   LAUNCH_PY="$INSTALL_DIR/.venv/bin/python"
-elif [ ! -d .venv ] && python3 -m venv .venv >/dev/null 2>&1; then
-  :
+elif [ ! -d .venv ]; then
+  if ! python3 -m venv .venv >/dev/null 2>&1; then
+    say "python3-venv tidak tersedia, pakai pip system (--user)."
+    python3 -m pip install --user -r requirements.txt
+    LAUNCH_PY="$(command -v python3)"
+  fi
 fi
 
-if [ -x .venv/bin/python ]; then
+if [ -z "$LAUNCH_PY" ] && [ -x .venv/bin/python ]; then
   . .venv/bin/activate
   python -m pip install --quiet -r requirements.txt
   LAUNCH_PY="$INSTALL_DIR/.venv/bin/python"
-elif [ -z "$LAUNCH_PY" ]; then
-  say "python3-venv tidak tersedia, pakai pip system (--user)."
-  python3 -m pip install --user -r requirements.txt
-  LAUNCH_PY="$(command -v python3)"
 fi
 
 [ -n "$LAUNCH_PY" ] || die "Gagal menyiapkan Python di instalasi ini."
